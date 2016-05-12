@@ -1,0 +1,29 @@
+CREATE Database optionschain;
+use  optionschain;
+drop table puts;
+CREATE TABLE `puts` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `NAME` varchar(100) NOT NULL,
+  `ASK` double  NOT NULL,
+  `BID` double  NOT NULL,
+  `C` double NOT NULL,
+  `CID` double  NOT NULL,
+  `CP` double  NOT NULL,
+  `CS` varchar(100)  ,
+  `E` varchar(100)  NOT NULL,
+  `OPENINTEREST` double  NOT NULL,
+  `P` double  NOT NULL,
+  `ROC` double  NOT NULL,
+  `AROC` double NOT NULL,
+  `MARKETPRICE` double NOT NULL,
+  `S` varchar(100) NOT NULL,
+  `STRIKE` double NOT NULL,
+  `VOLUME` double NOT NULL,
+  `EXPIRATION` TIMESTAMP  NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;	
+
+select * from puts;
+
+
+select * from puts where aroc>0.03 and strike<marketprice*0.95;
