@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -26,6 +27,7 @@ import optionschain.predictor.model.Puts;
 
 public class WorkerThread implements Runnable {
 
+	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(WorkerThread.class);
 	private String command;
 	private static OptionsChain chain;
 	private static ApplicationContext context;
@@ -44,37 +46,65 @@ public class WorkerThread implements Runnable {
 	}
 
 	public void run() {
-		System.out.println(Thread.currentThread().getName() + "Start. Command = " + command);
+		//System.out.println(Thread.currentThread().getName() + "Start. Command = " + command);
 		try {
 			processCommand();
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.getLocalizedMessage(),e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
+			logger.error(e.getLocalizedMessage(),e);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
+			logger.error(e.getLocalizedMessage(),e);
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+			logger.error(e.getLocalizedMessage(),e);
 		}
-		System.out.println(Thread.currentThread().getName() + "End.");
+		//System.out.println(Thread.currentThread().getName() + "End.");
 	}
 
-	private void processCommand() throws JsonParseException, IOException, ParseException {
-			System.out.println("Initializing options chain");
+	private void processCommand() throws JsonParseException, IOException, ParseException , Exception{
+			//System.out.println("Initializing options chain");
 			OptionsChain chain = getOptionsChain(this.command);
-		
+		if(chain.getPuts()==null){
+			logger.info("Stocks:" + this.command + " : Does not have puts");
+			return;
+		}
 		for (int i = 0; i < chain.getPuts().length; i++) {
 			Puts puts = chain.getPuts()[i];
 			double strike = Utils.convertToDouble(puts.getStrike());
 			double bid = Utils.convertToDouble(puts.getB());
 			double roc = bid / (strike - bid);
-
+			//System.out.println("Puts:" + puts);
 			long diff = Utils.convertToUtilDate(puts.getExpiry()).getTime() - new Date().getTime();
 			double days = TimeUnit.MILLISECONDS.toDays(diff);
+			if (days == 0){
+				days = 1;
+			} else{
+				days = days+1;
+			}
+			//System.out.println("Math:" + 365 / days);
 			double aroc = ((double) Math.pow((double) (1 + roc), (double) (365 / days))) - 1;
-			dao.insert(puts, roc, aroc, Utils.convertToDouble(chain.getUnderlying_price()));
+			//System.out.println("aroc : " + aroc);
+			dao.insert(puts, roc, aroc, Utils.convertToDouble(chain.getUnderlying_price()), this.command, days);
 
+		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+			logger.error(e.getLocalizedMessage(),e);
 		}
 
 	}
@@ -84,9 +114,9 @@ public class WorkerThread implements Runnable {
 		return this.command;
 	}
 
-	private static OptionsChain getOptionsChain(String symbol) throws JsonParseException, IOException {
+	private OptionsChain getOptionsChain(String symbol) throws JsonParseException, IOException {
 		final String uri = "https://www.google.com/finance/option_chain?q="+symbol+"&output=json";
-
+		logger.info("URL: " + new Date() + " : " +uri);
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -95,7 +125,7 @@ public class WorkerThread implements Runnable {
 
 		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 
-		// logger.info(result.getBody());
+		//System.out.println(result.getBody());
 
 		JsonFactory factory = new JsonFactory();
 		factory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
@@ -103,7 +133,7 @@ public class WorkerThread implements Runnable {
 		ObjectMapper mapper = new ObjectMapper();
 		OptionsChain optionsChain = mapper.readValue(jp, OptionsChain.class);
 
-		System.out.println("OptionsChain : " + optionsChain);
+		//System.out.println("OptionsChain : " + optionsChain);
 		return optionsChain;
 	}
 }

@@ -165,9 +165,12 @@ public class Calls
         this.expiry = expiry;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [strike = "+strike+", vol = "+vol+", e = "+e+", b = "+b+", s = "+s+", c = "+c+", a = "+a+", p = "+p+", name = "+name+", oi = "+oi+", cid = "+cid+", expiry = "+expiry+"]";
-    }
+	@Override
+	public String toString() {
+		return "Calls [strike=" + strike + ", vol=" + vol + ", e=" + e + ", b=" + b + ", s=" + s + ", c=" + c + ", a="
+				+ a + ", p=" + p + ", cs=" + cs + ", cp=" + cp + ", name=" + name + ", oi=" + oi + ", cid=" + cid
+				+ ", expiry=" + expiry + "]";
+	}
+
+   
 }

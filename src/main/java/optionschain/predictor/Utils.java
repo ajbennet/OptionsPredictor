@@ -16,7 +16,7 @@ public class Utils {
 		if(value==null || value.equals("-")|| value.isEmpty()){
 			return 0.0d;
 		}else{
-			return Double.parseDouble(value);
+			return Double.parseDouble(value.replace(",", ""));
 		}
 	}
 	

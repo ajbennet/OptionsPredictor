@@ -38,6 +38,11 @@ public class Expirations
         this.y = y;
     }
 
+	@Override
+	public String toString() {
+		return "Expirations [d=" + d + ", m=" + m + ", y=" + y + "]";
+	}
+
     
 }
 

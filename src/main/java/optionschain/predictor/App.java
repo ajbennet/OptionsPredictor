@@ -16,21 +16,29 @@ import com.fasterxml.jackson.core.JsonParseException;
  *
  */
 public class App {
-	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Utils.class);
+	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(App.class);
 
 	public static void main(String[] args) throws JsonParseException, IOException, ParseException {
 		logger.info("Options Chain!");
 		
 
-		ExecutorService executor = Executors.newFixedThreadPool(20);
-		for (int i = 0; i < SecuritiesConstants.list.length; i++) {
-			Runnable worker = new WorkerThread(SecuritiesConstants.list[i]);
+		ExecutorService executor = Executors.newFixedThreadPool(1);
+		
+		Runnable worker ;
+//		worker= new WorkerThread("APC");
+//		executor.execute(worker);
+	
+		
+		for (int i = 0; i <SecuritiesConstants.list.length; i++) {
+			worker = new WorkerThread(SecuritiesConstants.list[i]);
 			executor.execute(worker);
 		}
+		
 		executor.shutdown();
-		while (!executor.isTerminated()) {
-		}
-		System.out.println("Finished all threads");
+//		while (!executor.isTerminated()) {
+//			
+//		}
+		logger.info("Finished all threads");
 	}
 
 	

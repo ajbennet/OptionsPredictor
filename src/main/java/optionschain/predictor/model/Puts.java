@@ -166,9 +166,12 @@ public class Puts
         this.expiry = expiry;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [strike = "+strike+", vol = "+vol+", e = "+e+", b = "+b+", s = "+s+", c = "+c+", a = "+a+", p = "+p+", name = "+name+", oi = "+oi+", cid = "+cid+", expiry = "+expiry+"]";
-    }
+	@Override
+	public String toString() {
+		return "Puts [strike=" + strike + ", vol=" + vol + ", e=" + e + ", b=" + b + ", s=" + s + ", c=" + c + ", a="
+				+ a + ", p=" + p + ", name=" + name + ", oi=" + oi + ", cid=" + cid + ", expiry=" + expiry + ", cs="
+				+ cs + ", cp=" + cp + "]";
+	}
+
+ 
 }

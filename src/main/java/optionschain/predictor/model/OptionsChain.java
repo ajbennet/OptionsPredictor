@@ -1,5 +1,7 @@
 package optionschain.predictor.model;
 
+import java.util.Arrays;
+
 public class OptionsChain {
 	private Puts[] puts;
 
@@ -72,6 +74,13 @@ public class OptionsChain {
     {
         this.expiry = expiry;
     }
+
+	@Override
+	public String toString() {
+		return "OptionsChain [puts=" + Arrays.toString(puts) + ", underlying_id=" + underlying_id
+				+ ", underlying_price=" + underlying_price + ", expirations=" + Arrays.toString(expirations)
+				+ ", calls=" + Arrays.toString(calls) + ", expiry=" + expiry + "]";
+	}
 
    
 }

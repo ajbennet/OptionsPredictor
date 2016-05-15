@@ -19,8 +19,10 @@ CREATE TABLE `puts` (
   `MARKETPRICE` double NOT NULL,
   `S` varchar(100) ,
   `STRIKE` double NOT NULL,
+  `DTE` double NOT NULL,
   `VOLUME` double ,
-  `EXPIRATION` TIMESTAMP  NOT NULL,
+  `EXPIRATION` TIMESTAMP  NOT NULL ,
+  `LASTRUNTIME` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;	
 
@@ -31,13 +33,17 @@ FROM
 
 Delete from puts where marketprice >0;
 
+Delete from puts where TIMEDIFF(current_timestamp(),LASTRUNTIME) <'01:05:00';
+
 select * from puts where aroc>0.03 and strike<marketprice*0.95 
 
-select * from puts where aroc>0.5 and strike<marketprice*0.7 order by aroc desc;
+select * from puts where aroc>0.5 and strike<marketprice*0.7 and expiration order by aroc desc;
+select * from puts where aroc>0.5 and strike<marketprice*0.85 order by aroc desc;
 
-select count(1), MARKETPRICE, s from puts group by MARKETPRICE,s;
+select count(1), Stock, s from puts group by stock,s;
 
-select count(1), MARKETPRICE from puts group by MARKETPRICE LIMIT 0,4000;
+select count(1), stock from puts group by stock LIMIT 0,4000;
+
 
 select count(distinct marketprice) from puts where marketprice <>0;
 

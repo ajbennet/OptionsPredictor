@@ -39,4 +39,9 @@ public void setY (String y)
 this.y = y;
 }
 
+@Override
+public String toString() {
+	return "Expiry [d=" + d + ", m=" + m + ", y=" + y + "]";
+}
+
 }
