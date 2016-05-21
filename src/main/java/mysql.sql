@@ -35,9 +35,9 @@ Delete from puts where marketprice >0;
 
 Delete from puts where TIMEDIFF(current_timestamp(),LASTRUNTIME) <'01:05:00';
 
-select * from puts where aroc>0.03 and strike<marketprice*0.95 
+select * from puts where STOCK = "AAPL"
 
-select * from puts where aroc>0.5 and strike<marketprice*0.7 and expiration order by aroc desc;
+select * from puts where aroc>0.1 and strike<marketprice*0.95 and expiration and DTE > 15 order by aroc desc;
 select * from puts where aroc>0.5 and strike<marketprice*0.85 order by aroc desc;
 
 select count(1), Stock, s from puts group by stock,s;
