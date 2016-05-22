@@ -28,7 +28,8 @@ public class App {
 //		worker= new WorkerThread("APC");
 //		executor.execute(worker);
 	
-		
+		//for (int i = 0; i <1; i++) {
+			
 		for (int i = 0; i <SecuritiesConstants.list.length; i++) {
 			worker = new WorkerThread(SecuritiesConstants.list[i]);
 			executor.execute(worker);

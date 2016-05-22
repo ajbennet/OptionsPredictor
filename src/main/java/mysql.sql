@@ -40,7 +40,7 @@ select * from puts where STOCK = "AAPL"
 select * from puts where aroc>0.1 and strike<marketprice*0.95 and expiration and DTE > 15 order by aroc desc;
 select * from puts where aroc>0.5 and strike<marketprice*0.85 order by aroc desc;
 
-select count(1), Stock, s from puts group by stock,s;
+select count(1), Stock, expiration from puts group by stock,expiration LIMIT 0, 100000;
 
 select count(1), stock from puts group by stock LIMIT 0,4000;
 
