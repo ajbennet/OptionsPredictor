@@ -22,7 +22,7 @@ public class App {
 		logger.info("Options Chain!");
 		
 
-		ExecutorService executor = Executors.newFixedThreadPool(1);
+		ExecutorService executor = Executors.newFixedThreadPool(20);
 		
 		Runnable worker ;
 //		worker= new WorkerThread("APC");

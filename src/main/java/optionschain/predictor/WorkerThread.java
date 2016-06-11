@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -165,7 +168,8 @@ public class WorkerThread implements Runnable {
 		final String uri = "https://www.google.com/finance/option_chain?q=" + symbol + "&output=json";
 		logger.info("Counter: "+counter+" URL: " + new Date() + " : " + uri);
 		RestTemplate restTemplate = new RestTemplate();
-
+//		HttpClient httpClient = HttpClientBuilder.create().setMaxConnTotal(100).setMaxConnPerRoute(100).build();
+//		restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
@@ -179,7 +183,6 @@ public class WorkerThread implements Runnable {
 		JsonParser jp = factory.createParser(result.getBody());
 		ObjectMapper mapper = new ObjectMapper();
 		OptionsChain optionsChain = mapper.readValue(jp, OptionsChain.class);
-
 		// System.out.println("OptionsChain : " + optionsChain);
 		return optionsChain;
 	}
@@ -188,19 +191,13 @@ public class WorkerThread implements Runnable {
 		final String uri = "https://www.google.com/finance/option_chain?q=" + symbol + 
 				"&expd=" +expiry.getD() + "&expm=" +expiry.getM()+ "&expy="+expiry.getY()+"&output=json&";
 		logger.info("Counter: "+counter+" URL: " + new Date() + " : " + uri);
-		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-
-		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-
+		
+		String body=Utils.httpPoolRequest(uri);
 		// System.out.println(result.getBody());
 
 		JsonFactory factory = new JsonFactory();
 		factory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		JsonParser jp = factory.createParser(result.getBody());
+		JsonParser jp = factory.createParser(body);
 		ObjectMapper mapper = new ObjectMapper();
 		OptionsChain optionsChain = mapper.readValue(jp, OptionsChain.class);
 
