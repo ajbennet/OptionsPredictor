@@ -2,7 +2,7 @@ package optionschain.predictor;
 
 public class SecuritiesConstants {
 
-	// public static final String[] list = {"AAPL"};
+	//public static final String[] list = {"AA"};
 
 	public static final String[] list = { "A", "AA", "AAL", "AAN", "AAOI", "AAON", "AAP", "AAPL", "AAT", "AAV", "AAWW",
 			"AAXJ", "AB", "ABAX", "ABB", "ABBV", "ABC", "ABCB", "ABCO", "ABEV", "ABG", "ABM", "ABMD", "ABR", "ABT",

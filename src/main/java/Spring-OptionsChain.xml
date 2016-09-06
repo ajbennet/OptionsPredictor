@@ -6,5 +6,7 @@
 	<bean id="optionschainDAO" class="optionschain.predictor.db.OptionsChainDaoImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	<bean id="TDoptionschainDAO" class="optionschain.predictor.db.TDOptionsChainDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 </beans>

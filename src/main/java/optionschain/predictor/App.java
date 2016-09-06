@@ -20,7 +20,7 @@ public class App {
 
 	public static void main(String[] args) throws JsonParseException, IOException, ParseException {
 		logger.info("Options Chain!");
-		
+		TDWorkerThread.login();
 
 		ExecutorService executor = Executors.newFixedThreadPool(20);
 		
@@ -31,7 +31,7 @@ public class App {
 		//for (int i = 0; i <1; i++) {
 			
 		for (int i = 0; i <SecuritiesConstants.list.length; i++) {
-			worker = new WorkerThread(SecuritiesConstants.list[i]);
+			worker = new TDWorkerThread(SecuritiesConstants.list[i]);
 			executor.execute(worker);
 		}
 		

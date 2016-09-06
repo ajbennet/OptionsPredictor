@@ -26,10 +26,46 @@ CREATE TABLE `puts` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;	
 
+drop table tdputs;
+
+CREATE TABLE `tdputs` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `OPTIONSYMBOL` varchar(100) ,
+  `UNDERLYINGSYMBOL` varchar(100) ,
+  `EXPIRATION` int not null,
+  `STRIKE` double  NOT NULL,
+  `ASK` double  NOT NULL,
+  `BID` double  NOT NULL,
+  `BIDASKSIZE` varchar(100) ,
+  `LAST` double ,
+  `LASTTRADEDATE` TIMESTAMP,
+  `VOLUME` double ,
+  `OPENINTEREST` double ,
+  `REALTIME` varchar(100) ,
+  `DELTA` double  ,
+  `THETA` double ,
+  `GAMMA` double  ,
+  `VEGA` double,
+  `RHO` double ,
+  `IMPLIEDVOLATILITY` double  ,
+  `TIMEVALUEINDEX` double ,
+  `MULTIPLIER` double  ,
+  `CHANGEVALUE` double  ,
+  `CHANGEPERCENT` double  ,
+  `INTHEMONEY` boolean  ,
+  `NEARTHEMONEY` boolean ,
+  `THEORETICALVALUE` double ,
+  `LASTRUNTIME` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;	
+
+
 SELECT 
     count(*)
 FROM
-    puts;
+    tdputs;
+
+select * from tdputs;
 
 Delete from puts where marketprice >0;
 

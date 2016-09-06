@@ -1,6 +1,11 @@
-package optionschain.predictor;
+package optionschain.predictor.utils;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -112,9 +117,9 @@ public class Utils {
 		try {
 			response = httpclient.execute(request);
 			logger.info(response.getStatusLine().toString());
-			//EntityUtils.consume(response.getEntity());
+			// EntityUtils.consume(response.getEntity());
 			body = EntityUtils.toString(response.getEntity(), "UTF-8");
-			//logger.info("Response: " + body);
+			// logger.info("Response: " + body);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,4 +138,47 @@ public class Utils {
 		logger.info("Connections kept alive: " + stats.getAvailable());
 		return body;
 	}
+
+	public static InputStream getStreamfromURL(String str) throws IOException {
+		URL url = new URL(str);
+		return url.openStream();
+	}
+
+	public static String sendURLPostRequest(String urlstr, OrderedHashMap paramOHM) throws IOException {
+
+		URL url = new URL(urlstr);
+		URLConnection urlConn = url.openConnection();
+		urlConn.setDoInput(true); // Let the run-time system (RTS) know that we
+									// want input.
+		urlConn.setDoOutput(true); // Let the RTS know that we want to do
+									// output.
+		urlConn.setUseCaches(false); // No caching, we want the real thing.
+		urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");// Specify
+																						// the
+																						// content
+																						// type.
+		// Send POST output.
+		DataOutputStream printout = new DataOutputStream(urlConn.getOutputStream());
+
+		StringBuffer data = new StringBuffer();
+		for (int i = 0; i < paramOHM.size(); i++) {
+			String key = (String) paramOHM.getKey(i);
+			String value = (String) paramOHM.getValue(i);
+			System.out.println(key + " " + value);
+
+			data.append(URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"));
+			if (i < paramOHM.size() - 1) {
+				data.append("&");
+			}
+		} // for
+
+		printout.writeBytes(data.toString());
+		printout.flush();
+		printout.close();
+		// Get response data.
+
+		String resp = StringHelper.inputStreamtoString(urlConn.getInputStream());
+		return resp;
+	}
+
 }

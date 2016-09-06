@@ -12,8 +12,8 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 
-import optionschain.predictor.Utils;
 import optionschain.predictor.model.Puts;
+import optionschain.predictor.utils.Utils;
 
 public class OptionsChainDaoImpl implements OptionsChainDao {
 

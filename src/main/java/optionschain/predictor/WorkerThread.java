@@ -6,6 +6,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -25,10 +29,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import optionschain.predictor.db.OptionsChainDao;
+import optionschain.predictor.model.Amtd;
 import optionschain.predictor.model.Expirations;
 import optionschain.predictor.model.Expiry;
 import optionschain.predictor.model.OptionsChain;
 import optionschain.predictor.model.Puts;
+import optionschain.predictor.utils.Config;
+import optionschain.predictor.utils.Utils;
 
 public class WorkerThread implements Runnable {
 
@@ -197,11 +204,13 @@ public class WorkerThread implements Runnable {
 
 		JsonFactory factory = new JsonFactory();
 		factory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		JsonParser jp = factory.createParser(body);
+		JsonParser jp = factory.createParser(body     );
 		ObjectMapper mapper = new ObjectMapper();
 		OptionsChain optionsChain = mapper.readValue(jp, OptionsChain.class);
 
 		// System.out.println("OptionsChain : " + optionsChain);
 		return optionsChain;
 	}
+	
+	
 }
