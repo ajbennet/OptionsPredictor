@@ -963,7 +963,7 @@ public class Amtd {
             public static class OptionStrike {
 
                 @XmlElement(name = "strike-price")
-                protected int strikePrice;
+                protected double strikePrice;
                 @XmlElement(name = "standard-option", required = true)
                 protected String standardOption;
                 @XmlElement(required = true)
@@ -973,7 +973,7 @@ public class Amtd {
                  * Gets the value of the strikePrice property.
                  * 
                  */
-                public int getStrikePrice() {
+                public double getStrikePrice() {
                     return strikePrice;
                 }
 
@@ -981,7 +981,7 @@ public class Amtd {
                  * Sets the value of the strikePrice property.
                  * 
                  */
-                public void setStrikePrice(int value) {
+                public void setStrikePrice(double value) {
                     this.strikePrice = value;
                 }
 
@@ -1143,17 +1143,17 @@ public class Amtd {
                     protected String realTime;
                     @XmlElement(name = "underlying-symbol", required = true)
                     protected String underlyingSymbol;
-                    protected int delta;
-                    protected int gamma;
-                    protected int theta;
-                    protected int vega;
-                    protected int rho;
+                    protected double delta;
+                    protected double gamma;
+                    protected double theta;
+                    protected double vega;
+                    protected double rho;
                     @XmlElement(name = "implied-volatility")
-                    protected int impliedVolatility;
+                    protected double impliedVolatility;
                     @XmlElement(name = "time-value-index")
-                    protected int timeValueIndex;
-                    protected int multiplier;
-                    protected int change;
+                    protected double timeValueIndex;
+                    protected double multiplier;
+                    protected double change;
                     @XmlElement(name = "change-percent", required = true)
                     protected double changePercent;
                     @XmlElement(name = "in-the-money", required = true)
@@ -1161,7 +1161,7 @@ public class Amtd {
                     @XmlElement(name = "near-the-money", required = true)
                     protected String nearTheMoney;
                     @XmlElement(name = "theoretical-value")
-                    protected int theoreticalValue;
+                    protected double theoreticalValue;
                     @XmlElement(name = "deliverable-list", required = true)
                     protected Amtd.OptionChainResults.OptionDate.OptionStrike.Put.DeliverableList deliverableList;
 
@@ -1353,7 +1353,7 @@ public class Amtd {
                      * Gets the value of the delta property.
                      * 
                      */
-                    public int getDelta() {
+                    public double getDelta() {
                         return delta;
                     }
 
@@ -1361,7 +1361,7 @@ public class Amtd {
                      * Sets the value of the delta property.
                      * 
                      */
-                    public void setDelta(int value) {
+                    public void setDelta( double  value) {
                         this.delta = value;
                     }
 
@@ -1369,7 +1369,7 @@ public class Amtd {
                      * Gets the value of the gamma property.
                      * 
                      */
-                    public int getGamma() {
+                    public double getGamma() {
                         return gamma;
                     }
 
@@ -1377,7 +1377,7 @@ public class Amtd {
                      * Sets the value of the gamma property.
                      * 
                      */
-                    public void setGamma(int value) {
+                    public void setGamma(double value) {
                         this.gamma = value;
                     }
 
@@ -1385,7 +1385,7 @@ public class Amtd {
                      * Gets the value of the theta property.
                      * 
                      */
-                    public int getTheta() {
+                    public double getTheta() {
                         return theta;
                     }
 
@@ -1393,7 +1393,7 @@ public class Amtd {
                      * Sets the value of the theta property.
                      * 
                      */
-                    public void setTheta(int value) {
+                    public void setTheta(double value) {
                         this.theta = value;
                     }
 
@@ -1401,7 +1401,7 @@ public class Amtd {
                      * Gets the value of the vega property.
                      * 
                      */
-                    public int getVega() {
+                    public double getVega() {
                         return vega;
                     }
 
@@ -1409,7 +1409,7 @@ public class Amtd {
                      * Sets the value of the vega property.
                      * 
                      */
-                    public void setVega(int value) {
+                    public void setVega(double value) {
                         this.vega = value;
                     }
 
@@ -1417,7 +1417,7 @@ public class Amtd {
                      * Gets the value of the rho property.
                      * 
                      */
-                    public int getRho() {
+                    public double getRho() {
                         return rho;
                     }
 
@@ -1425,7 +1425,7 @@ public class Amtd {
                      * Sets the value of the rho property.
                      * 
                      */
-                    public void setRho(int value) {
+                    public void setRho(double value) {
                         this.rho = value;
                     }
 
@@ -1433,7 +1433,7 @@ public class Amtd {
                      * Gets the value of the impliedVolatility property.
                      * 
                      */
-                    public int getImpliedVolatility() {
+                    public double getImpliedVolatility() {
                         return impliedVolatility;
                     }
 
@@ -1441,7 +1441,7 @@ public class Amtd {
                      * Sets the value of the impliedVolatility property.
                      * 
                      */
-                    public void setImpliedVolatility(int value) {
+                    public void setImpliedVolatility(double value) {
                         this.impliedVolatility = value;
                     }
 
@@ -1449,7 +1449,7 @@ public class Amtd {
                      * Gets the value of the timeValueIndex property.
                      * 
                      */
-                    public int getTimeValueIndex() {
+                    public double getTimeValueIndex() {
                         return timeValueIndex;
                     }
 
@@ -1457,7 +1457,7 @@ public class Amtd {
                      * Sets the value of the timeValueIndex property.
                      * 
                      */
-                    public void setTimeValueIndex(int value) {
+                    public void setTimeValueIndex(double value) {
                         this.timeValueIndex = value;
                     }
 
@@ -1465,7 +1465,7 @@ public class Amtd {
                      * Gets the value of the multiplier property.
                      * 
                      */
-                    public int getMultiplier() {
+                    public double getMultiplier() {
                         return multiplier;
                     }
 
@@ -1473,7 +1473,7 @@ public class Amtd {
                      * Sets the value of the multiplier property.
                      * 
                      */
-                    public void setMultiplier(int value) {
+                    public void setMultiplier(double value) {
                         this.multiplier = value;
                     }
 
@@ -1481,7 +1481,7 @@ public class Amtd {
                      * Gets the value of the change property.
                      * 
                      */
-                    public int getChange() {
+                    public double getChange() {
                         return change;
                     }
 
@@ -1489,7 +1489,7 @@ public class Amtd {
                      * Sets the value of the change property.
                      * 
                      */
-                    public void setChange(int value) {
+                    public void setChange(double value) {
                         this.change = value;
                     }
 
@@ -1569,7 +1569,7 @@ public class Amtd {
                      * Gets the value of the theoreticalValue property.
                      * 
                      */
-                    public int getTheoreticalValue() {
+                    public double getTheoreticalValue() {
                         return theoreticalValue;
                     }
 
@@ -1577,7 +1577,7 @@ public class Amtd {
                      * Sets the value of the theoreticalValue property.
                      * 
                      */
-                    public void setTheoreticalValue(int value) {
+                    public void setTheoreticalValue(double value) {
                         this.theoreticalValue = value;
                     }
 

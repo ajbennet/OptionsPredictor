@@ -66,8 +66,6 @@ public class TDWorkerThread implements Runnable {
 	}
 
 	public void run() {
-		// System.out.println(Thread.currentThread().getName() + "Start. Command
-		// = " + command);
 		try {
 			processCommand();
 		} catch (JsonParseException e) {
@@ -90,7 +88,6 @@ public class TDWorkerThread implements Runnable {
 
 			logger.error(e.getLocalizedMessage(), e);
 		}
-		// System.out.println(Thread.currentThread().getName() + "End.");
 	}
 
 	private void processCommand() throws JsonParseException, IOException, ParseException, Exception {
@@ -153,7 +150,7 @@ public class TDWorkerThread implements Runnable {
 			jaxbContext = JAXBContext.newInstance(Amtd.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			amtd = (Amtd) jaxbUnmarshaller.unmarshal(Utils.getStreamfromURL(str));
-			System.out.println("Amtd : " + amtd);
+			logger.debug("Amtd : " + amtd);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -179,10 +176,8 @@ public class TDWorkerThread implements Runnable {
 		ohm.put("password", Config.getProperty("AMTDPassword"));
 		ohm.put("source", Config.getProperty("AMTDsourceID")); // F3
 		ohm.put("version", "1001");
-		System.out.println("OHM: " +ohm.getValue(0));
 		String url = "https://apis.tdameritrade.com/apps/300/LogIn?source="+Config.getProperty("AMTDsourceID")+"&version=1001";
 		String res = Utils.sendURLPostRequest(url, ohm);
-		System.out.println("Response: " +res);
 		XMLNode root = new XMLNodeBuilder(res).getRoot();
 
 		SessionControl.setSessionid(

@@ -97,7 +97,6 @@ XMLNode newnode=new XMLNode(qName,atts);
 	
   {
    try{
-   // System.out.println("endElement: " + qName);
 	cnode.setValue(cnode.sb.toString().trim() );
    cnode.sb=null;
    if(cnode.getParent()!=null){ cnode=(XMLNode)cnode.getParent(); }

@@ -3,18 +3,11 @@ package optionschain.predictor.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.Date;
-
 import javax.sql.DataSource;
-
 import org.slf4j.Logger;
-
 import optionschain.predictor.model.Amtd.OptionChainResults.OptionDate.OptionStrike.Put;
-import optionschain.predictor.model.Puts;
-import optionschain.predictor.utils.Utils;
 
 public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 
@@ -33,7 +26,7 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 				+ "CHANGEPERCENT,INTHEMONEY,NEARTHEMONEY,THEORETICALVALUE,EXPIRATION,STRIKE)"
 				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Connection conn = null;
-		logger.info("Processing Put : " + puts);
+		//logger.info("Processing Put : " + puts);
 		try {
 			conn = dataSource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);

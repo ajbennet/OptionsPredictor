@@ -61,9 +61,9 @@ CREATE TABLE `tdputs` (
 
 
 SELECT 
-    count(*)
+    lastruntime, count(*)
 FROM
-    tdputs;
+    tdputs group by lastruntime;
 
 select * from tdputs;
 

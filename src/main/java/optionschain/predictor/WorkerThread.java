@@ -58,7 +58,6 @@ public class WorkerThread implements Runnable {
 	}
 
 	public void run() {
-		// System.out.println(Thread.currentThread().getName() + "Start. Command
 		// = " + command);
 		try {
 			processCommand();
@@ -82,11 +81,9 @@ public class WorkerThread implements Runnable {
 
 			logger.error(e.getLocalizedMessage(), e);
 		}
-		// System.out.println(Thread.currentThread().getName() + "End.");
 	}
 
 	private void processCommand() throws JsonParseException, IOException, ParseException , Exception{
-		//System.out.println("Initializing options chain");
 		OptionsChain chain = getOptionsChain(this.command);
 		logger.debug("Options Chain Expirations : " + chain.getExpirations());
 		
@@ -148,7 +145,6 @@ public class WorkerThread implements Runnable {
 			double strike = Utils.convertToDouble(puts.getStrike());
 			double bid = Utils.convertToDouble(puts.getB());
 			double roc = bid / (strike - bid);
-			//System.out.println("Puts:" + puts);
 			long diff = Utils.convertToUtilDate(puts.getExpiry()).getTime() - new Date().getTime();
 			double days = TimeUnit.MILLISECONDS.toDays(diff);
 			if (days == 0){
@@ -156,9 +152,7 @@ public class WorkerThread implements Runnable {
 			} else{
 				days = days+1;
 			}
-			//System.out.println("Math:" + 365 / days);
 			double aroc = ((double) Math.pow((double) (1 + roc), (double) (365 / days))) - 1;
-			//System.out.println("aroc : " + aroc);
 			dao.insert(puts, roc, aroc, Utils.convertToDouble(chain.getUnderlying_price()), this.command, days);
 
 		}
@@ -183,14 +177,12 @@ public class WorkerThread implements Runnable {
 
 		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 
-		// System.out.println(result.getBody());
 
 		JsonFactory factory = new JsonFactory();
 		factory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		JsonParser jp = factory.createParser(result.getBody());
 		ObjectMapper mapper = new ObjectMapper();
 		OptionsChain optionsChain = mapper.readValue(jp, OptionsChain.class);
-		// System.out.println("OptionsChain : " + optionsChain);
 		return optionsChain;
 	}
 	
@@ -200,7 +192,6 @@ public class WorkerThread implements Runnable {
 		logger.info("Counter: "+counter+" URL: " + new Date() + " : " + uri);
 		
 		String body=Utils.httpPoolRequest(uri);
-		// System.out.println(result.getBody());
 
 		JsonFactory factory = new JsonFactory();
 		factory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
@@ -208,7 +199,6 @@ public class WorkerThread implements Runnable {
 		ObjectMapper mapper = new ObjectMapper();
 		OptionsChain optionsChain = mapper.readValue(jp, OptionsChain.class);
 
-		// System.out.println("OptionsChain : " + optionsChain);
 		return optionsChain;
 	}
 	

@@ -72,12 +72,9 @@ public class Utils {
 				String requestURI = urisToGet[i];
 				HttpGet request = new HttpGet(requestURI);
 
-				System.out.println("Executing request " + requestURI);
 
 				CloseableHttpResponse response = httpclient.execute(request);
 				try {
-					System.out.println("----------------------------------------");
-					System.out.println(response.getStatusLine());
 					EntityUtils.consume(response.getEntity());
 				} finally {
 					response.close();
@@ -85,13 +82,11 @@ public class Utils {
 			}
 
 			PoolStats stats1 = cm.getTotalStats();
-			System.out.println("Connections kept alive: " + stats1.getAvailable());
 
 			// Sleep 10 sec and let the connection evictor do its job
 			Thread.sleep(10000);
 
 			PoolStats stats2 = cm.getTotalStats();
-			System.out.println("Connections kept alive: " + stats2.getAvailable());
 
 		} finally {
 			httpclient.close();
@@ -164,7 +159,6 @@ public class Utils {
 		for (int i = 0; i < paramOHM.size(); i++) {
 			String key = (String) paramOHM.getKey(i);
 			String value = (String) paramOHM.getValue(i);
-			System.out.println(key + " " + value);
 
 			data.append(URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"));
 			if (i < paramOHM.size() - 1) {
