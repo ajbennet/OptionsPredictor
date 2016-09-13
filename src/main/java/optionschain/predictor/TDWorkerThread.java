@@ -103,7 +103,8 @@ public class TDWorkerThread implements Runnable {
 				while(strikeIterator.hasNext()){
 					OptionStrike optionStrike =(OptionStrike) strikeIterator.next();
 
-					dao.insert(optionStrike.getPut(), optionDate.getDate(), optionStrike.getStrikePrice());
+					dao.insert(optionStrike.getPut(), optionDate.getDate(), optionStrike.getStrikePrice(), 
+							amtd.getOptionChainResults().getTime(), amtd.getOptionChainResults().getLast());
 					
 				}
 			}

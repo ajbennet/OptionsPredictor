@@ -38,7 +38,7 @@ CREATE TABLE `tdputs` (
   `BID` double  NOT NULL,
   `BIDASKSIZE` varchar(100) ,
   `LAST` double ,
-  `LASTTRADEDATE` TIMESTAMP,
+  `TIME` varchar(10),
   `VOLUME` double ,
   `OPENINTEREST` double ,
   `REALTIME` varchar(100) ,
@@ -66,6 +66,8 @@ FROM
     tdputs group by lastruntime;
 
 select * from tdputs;
+
+select count(*) from tdputs;
 
 Delete from puts where marketprice >0;
 

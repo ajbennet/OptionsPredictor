@@ -5,8 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+
 import javax.sql.DataSource;
+
 import org.slf4j.Logger;
+
 import optionschain.predictor.model.Amtd.OptionChainResults.OptionDate.OptionStrike.Put;
 
 public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
@@ -18,9 +21,9 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 		this.dataSource = dataSource;
 	}
 
-	public void insert(Put puts, int date, double strike) {
+	public void insert(Put puts, int date, double strike, String time, double last) {
 		String sql = "INSERT INTO tdputs "
-				+ "(OPTIONSYMBOL,BID,ASK,BIDASKSIZE,LAST,LASTTRADEDATE,VOLUME,"
+				+ "(OPTIONSYMBOL,BID,ASK,BIDASKSIZE,LAST,TIME,VOLUME,"
 				+ "OPENINTEREST,REALTIME,UNDERLYINGSYMBOL,DELTA,GAMMA,THETA,VEGA,"
 				+ "RHO,IMPLIEDVOLATILITY,TIMEVALUEINDEX,MULTIPLIER,CHANGEVALUE,"
 				+ "CHANGEPERCENT,INTHEMONEY,NEARTHEMONEY,THEORETICALVALUE,EXPIRATION,STRIKE)"
@@ -34,8 +37,8 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 			ps.setDouble(2,puts.getBid());
 			ps.setDouble(3,puts.getAsk());
 			ps.setDouble(4,puts.getBidAskSize());
-			ps.setDouble(5,puts.getLast());
-			ps.setTimestamp(6,new Timestamp(new Date().getTime()));//TODO: Need to change this.
+			ps.setDouble(5,last);
+			ps.setString(6,time);
 			ps.setDouble(7,puts.getVolume());
 			ps.setDouble(8,puts.getOpenInterest());
 			ps.setString(9,puts.getRealTime());
