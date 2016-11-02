@@ -22,7 +22,7 @@ public class App {
 		logger.info("Options Chain!");
 		TDWorkerThread.login();
 
-		ExecutorService executor = Executors.newFixedThreadPool(20);
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		
 		Runnable worker ;
 //		worker= new WorkerThread("APC");

@@ -4,5 +4,5 @@ import optionschain.predictor.model.Amtd.OptionChainResults.OptionDate.OptionStr
 
 public interface TDOptionsChainDao 
 {
-	public void insert(Put put, int date, double strike, String time, double last);
+	public void insert(Put put, int date, double strike, String time, double last, double open, double close, double high, double low, double roc, double aroc);
 }

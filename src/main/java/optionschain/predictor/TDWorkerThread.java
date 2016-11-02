@@ -102,9 +102,19 @@ public class TDWorkerThread implements Runnable {
 				Iterator<OptionStrike> strikeIterator = optionDate.getOptionStrike().iterator();
 				while(strikeIterator.hasNext()){
 					OptionStrike optionStrike =(OptionStrike) strikeIterator.next();
-
+					double bid = optionStrike.getPut().getBid();
+					double strike = optionStrike.getStrikePrice();
+					double roc =  bid/ (strike - bid);
+					int days = optionDate.getDaysToExpiration();
+					double aroc = ((double) Math.pow((double) (1 + roc), (double) (365 / days))) - 1;
 					dao.insert(optionStrike.getPut(), optionDate.getDate(), optionStrike.getStrikePrice(), 
-							amtd.getOptionChainResults().getTime(), amtd.getOptionChainResults().getLast());
+							amtd.getOptionChainResults().getTime(), 
+							amtd.getOptionChainResults().getLast(),
+							amtd.getOptionChainResults().getOpen(),
+							amtd.getOptionChainResults().getClose(),
+							amtd.getOptionChainResults().getHigh(),
+							amtd.getOptionChainResults().getLow(),
+							roc, aroc);
 					
 				}
 			}
@@ -151,7 +161,7 @@ public class TDWorkerThread implements Runnable {
 			jaxbContext = JAXBContext.newInstance(Amtd.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			amtd = (Amtd) jaxbUnmarshaller.unmarshal(Utils.getStreamfromURL(str));
-			logger.debug("Amtd : " + amtd);
+			logger.info("Response for Symbol : " + symbols + " : " + amtd);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

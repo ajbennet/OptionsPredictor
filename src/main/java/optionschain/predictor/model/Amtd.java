@@ -147,17 +147,28 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "result",
-    "optionChainResults"
+    "optionChainResults",
+    "error"
 })
 @XmlRootElement(name = "amtd")
 public class Amtd {
 
     @XmlElement(required = true)
     protected String result;
-    @XmlElement(name = "option-chain-results", required = true)
+    @XmlElement(name = "option-chain-results", required = false)
     protected Amtd.OptionChainResults optionChainResults;
+    @XmlElement(required = false)
+    protected String error;
+    
+    public String getError() {
+		return error;
+	}
 
-    /**
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	/**
      * Gets the value of the result property.
      * 
      * @return
@@ -1891,7 +1902,7 @@ public class Amtd {
 
 	@Override
 	public String toString() {
-		return "Amtd [result=" + result + ", optionChainResults=" + optionChainResults + "]";
+		return "Amtd [result=" + result + ", optionChainResults=" + optionChainResults + ", error=" + error + "]";
 	}
 
 }
