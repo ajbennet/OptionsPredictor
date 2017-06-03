@@ -73,7 +73,8 @@ CREATE TABLE `tdputs` (
 
 use  optionschain;
 
-SELECT * FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and delta > -0.06 LIMIT 0,1000000;
+SELECT * FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and delta > -0.06 and AROM >0.29 AND  DTE <60 LIMIT 0,1000000;
+
 
 
 SELECT 

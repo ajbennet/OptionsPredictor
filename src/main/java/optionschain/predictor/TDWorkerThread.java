@@ -141,7 +141,7 @@ public class TDWorkerThread implements Runnable {
 		}
 		counter++;
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,8 +151,7 @@ public class TDWorkerThread implements Runnable {
 
 		try {
 			if (counter % 3000 == 0) {
-				// sleep for 2 hrs after every 3000;
-				Thread.sleep(2 * 60 * 100);
+				Thread.sleep(2 * 60 );
 			}
 			;
 			Thread.sleep(1000);

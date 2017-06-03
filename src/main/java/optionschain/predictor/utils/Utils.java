@@ -1,23 +1,33 @@
 package optionschain.predictor.utils;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -46,7 +56,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -75,71 +84,90 @@ public class Utils {
 		return startDate;
 	}
 	
-	private void sendEmail(String emailId, String investor, String token){
-			
-			final String username = Config.getProperty("EmailUsername");
-			final String password = Config.getProperty("EmailPassword");
-		
-			Properties props = new Properties();
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.host", "smtp.gmail.com");
-			props.put("mail.smtp.port", "587");
-		
-			Session session = Session.getInstance(props,
-			  new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(username, password);
-				}
-			  });
-		
-			try {
-		
-				Message message = new MimeMessage(session);
-				message.setFrom(new InternetAddress("support@incub.ee"));
-				message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(emailId));
-				message.setSubject( "Invitation from " + investor );
-				
-				BodyPart body = new MimeBodyPart();
-				 
-		           Configuration cfg = new Configuration();
-		           cfg.setClassForTemplateLoading(
-		        		   Puts.class,
-		        		   "/");
-		
-		
-		
-		//            FileTemplateLoader templateLoader = new FileTemplateLoader(new File("templates"));
-		//            cfg.setTemplateLoader(templateLoader);
-		           Template template = cfg.getTemplate("email_template.ftl");
-		           Map<String, String> rootMap = new HashMap<String, String>();
-		           rootMap.put("investor", investor);
-		           rootMap.put("token", token);
-		           Writer out = new StringWriter();
-		           template.process(rootMap, out);
-		
-		           /* you can add html tags in your text to decorate it. */
-		           body.setContent(out.toString(), "text/html");
-		
-		           Multipart multipart = new MimeMultipart();
-		           multipart.addBodyPart(body);
-		             
-		           message.setContent(multipart, "text/html");
-		 			
-		 			Transport.send(message);
-		 			logger.info("Email sent to :" + emailId + " from: " + investor);
-		 
-		 		} catch (MessagingException e) {
-		 			throw new RuntimeException(e);
-		 		} catch (IOException e) {
-		 			// TODO Auto-generated catch block
-		 			e.printStackTrace();
-		 		} catch (TemplateException e) {
-		 			// TODO Auto-generated catch block
-		 			e.printStackTrace();
-		 		}
-		 	}
+	public static void convertToCsv(ResultSet rs) throws SQLException, FileNotFoundException {
+        PrintWriter csvWriter = new PrintWriter(new File("logs/results.csv")) ;
+        ResultSetMetaData meta = rs.getMetaData() ; 
+        int numberOfColumns = meta.getColumnCount() ; 
+        String dataHeaders = "\"" + meta.getColumnName(1) + "\"" ; 
+        for (int i = 2 ; i < numberOfColumns + 1 ; i ++ ) { 
+                dataHeaders += ",\"" + meta.getColumnName(i).replaceAll("\"","\\\"") + "\"" ;
+        }
+        csvWriter.println(dataHeaders) ;
+        while (rs.next()) {
+            String row = "\"" + rs.getString(1).replaceAll("\"","\\\"") + "\""  ; 
+            for (int i = 2 ; i < numberOfColumns + 1 ; i ++ ) {
+                row += ",\"" + rs.getString(i).replaceAll("\"","\\\"") + "\"" ;
+            }
+        csvWriter.println(row) ;
+        }
+        csvWriter.close();
+    }
+
+	public static void sendEmail(String emailId) {
+
+		final String username = Config.getProperty("EmailUsername");
+		final String password = Config.getProperty("EmailPassword");
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
+
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("support@incub.ee"));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailId));
+			message.setSubject("Options picks from The Options Profit team " );
+
+			BodyPart body = new MimeBodyPart();
+
+			Configuration cfg = new Configuration();
+			cfg.setClassForTemplateLoading(Puts.class, "/");
+
+			// FileTemplateLoader templateLoader = new FileTemplateLoader(new
+			// File("templates"));
+			// cfg.setTemplateLoader(templateLoader);
+			Template template = cfg.getTemplate("email_template.ftl");
+			Map<String, String> rootMap = new HashMap<String, String>();
+			String timeStamp = new SimpleDateFormat("yyyyMMMdd_HHmmss").format(Calendar.getInstance().getTime());
+			rootMap.put("date", timeStamp);
+			//rootMap.put("token", "token");
+			Writer out = new StringWriter();
+			template.process(rootMap, out);
+
+			/* you can add html tags in your text to decorate it. */
+			body.setContent(out.toString(), "text/html");
+
+			Multipart multipart = new MimeMultipart();
+			multipart.addBodyPart(body);
+			BodyPart messageBodyPart = new MimeBodyPart();
+			String filename = "logs/results.csv";
+			DataSource source = new FileDataSource(filename);
+			messageBodyPart.setDataHandler(new DataHandler(source));
+			messageBodyPart.setFileName("results.csv");
+			multipart.addBodyPart(messageBodyPart);
+			message.setContent(multipart, "text/html");
+
+			Transport.send(message);
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	static PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 
@@ -160,7 +188,6 @@ public class Utils {
 			for (int i = 0; i < urisToGet.length; i++) {
 				String requestURI = urisToGet[i];
 				HttpGet request = new HttpGet(requestURI);
-
 
 				CloseableHttpResponse response = httpclient.execute(request);
 				try {

@@ -1,8 +1,11 @@
 package optionschain.predictor.db;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -11,6 +14,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 
 import optionschain.predictor.model.Amtd.OptionChainResults.OptionDate.OptionStrike.Put;
+import optionschain.predictor.utils.Utils;
 
 public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 
@@ -64,12 +68,12 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 			ps.setDouble(27,close);
 			ps.setDouble(28,high);
 			ps.setDouble(29,low);
-			ps.setDouble(30,roc);
-			ps.setDouble(31,aroc);
+			ps.setDouble(30,roc*100);
+			ps.setDouble(31,aroc*100);
 			ps.setInt(32,dte);
 			ps.setDouble(33, percentbelow);
-			ps.setDouble(34, rom);
-			ps.setDouble(35, arom);
+			ps.setDouble(34, rom*100);
+			ps.setDouble(35, arom*100);
 			ps.setInt(36, regtmargin);
 			ps.executeUpdate();
 			ps.close();
@@ -88,6 +92,58 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 			}
 		}
 
+	}
+	
+	public void filterData() {
+		String query = "SELECT UNDERLYINGSYMBOL, LAST, EXPIRATION,DTE,STRIKE,BID,ASK, THEORETICALVALUE,  DELTA,PERCENTBELOW, ROM, AROM, REGTMARGIN,IMPLIEDVOLATILITY,ROC, AROC"
+				+ " FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and "
+				+ "delta > -0.06 and AROM >29 AND  DTE <60 LIMIT 0,1000000;";
+		Connection conn = null;
+		//logger.info("Processing Put : " + puts);
+		try {
+			conn = dataSource.getConnection();
+			Statement stmt = conn.createStatement() ;
+			ResultSet rs = stmt.executeQuery(query) ;
+			Utils.convertToCsv(rs);
+		} catch (SQLException e) {
+			logger.error(e.getLocalizedMessage(),e);
+			throw new RuntimeException(e);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+
+					logger.error(e.getLocalizedMessage(),e);
+				}
+			}
+		}
+	}
+	
+	public void clearData() {
+		String query = "Delete from tdputs;";
+		Connection conn = null;
+		//logger.info("Processing Put : " + puts);
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+		    preparedStmt.execute();
+		} catch (SQLException e) {
+			logger.error(e.getLocalizedMessage(),e);
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+
+					logger.error(e.getLocalizedMessage(),e);
+				}
+			}
+		}
 	}
 
 }
