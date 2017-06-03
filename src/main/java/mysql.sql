@@ -33,11 +33,16 @@ CREATE TABLE `tdputs` (
   `OPTIONSYMBOL` varchar(100) ,
   `UNDERLYINGSYMBOL` varchar(100) ,
   `EXPIRATION` int not null,
+  `DTE` int not null,
   `STRIKE` double  NOT NULL,
   `ASK` double  NOT NULL,
   `BID` double  NOT NULL,
   `BIDASKSIZE` varchar(100) ,
   `LAST` double ,
+  `PERCENTBELOW` double,
+  `ROM` double,
+  `AROM` double,
+  `REGTMARGIN` int,
   `OPEN` double ,
   `CLOSE` double ,
   `HIGH` double ,
@@ -66,6 +71,11 @@ CREATE TABLE `tdputs` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;	
 
 
+use  optionschain;
+
+SELECT * FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and delta > -0.06 LIMIT 0,1000000;
+
+
 SELECT 
     lastruntime, count(*)
 FROM
@@ -79,7 +89,7 @@ Delete from puts where marketprice >0;
 
 Delete from puts where TIMEDIFF(current_timestamp(),LASTRUNTIME) <'01:05:00';
 
-select * from puts where STOCK = "AAPL"
+select * from puts where STOCK = "AAPL";
 
 select * from puts where aroc>0.1 and strike<marketprice*0.95 and expiration and DTE > 15 order by aroc desc LIMIT 0, 100000;
 select * from puts where aroc>0.5 and strike<marketprice*0.85 order by aroc desc;

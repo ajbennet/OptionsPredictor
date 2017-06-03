@@ -3,6 +3,8 @@ package optionschain.predictor.utils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -11,7 +13,22 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,6 +45,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import freemarker.cache.FileTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import optionschain.predictor.model.Puts;
 
 public class Utils {
 	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Utils.class);
@@ -51,6 +74,72 @@ public class Utils {
 		java.util.Date startDate = (java.util.Date) (formatter.parse(dateStr));
 		return startDate;
 	}
+	
+	private void sendEmail(String emailId, String investor, String token){
+			
+			final String username = Config.getProperty("EmailUsername");
+			final String password = Config.getProperty("EmailPassword");
+		
+			Properties props = new Properties();
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.port", "587");
+		
+			Session session = Session.getInstance(props,
+			  new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			  });
+		
+			try {
+		
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress("support@incub.ee"));
+				message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(emailId));
+				message.setSubject( "Invitation from " + investor );
+				
+				BodyPart body = new MimeBodyPart();
+				 
+		           Configuration cfg = new Configuration();
+		           cfg.setClassForTemplateLoading(
+		        		   Puts.class,
+		        		   "/");
+		
+		
+		
+		//            FileTemplateLoader templateLoader = new FileTemplateLoader(new File("templates"));
+		//            cfg.setTemplateLoader(templateLoader);
+		           Template template = cfg.getTemplate("email_template.ftl");
+		           Map<String, String> rootMap = new HashMap<String, String>();
+		           rootMap.put("investor", investor);
+		           rootMap.put("token", token);
+		           Writer out = new StringWriter();
+		           template.process(rootMap, out);
+		
+		           /* you can add html tags in your text to decorate it. */
+		           body.setContent(out.toString(), "text/html");
+		
+		           Multipart multipart = new MimeMultipart();
+		           multipart.addBodyPart(body);
+		             
+		           message.setContent(multipart, "text/html");
+		 			
+		 			Transport.send(message);
+		 			logger.info("Email sent to :" + emailId + " from: " + investor);
+		 
+		 		} catch (MessagingException e) {
+		 			throw new RuntimeException(e);
+		 		} catch (IOException e) {
+		 			// TODO Auto-generated catch block
+		 			e.printStackTrace();
+		 		} catch (TemplateException e) {
+		 			// TODO Auto-generated catch block
+		 			e.printStackTrace();
+		 		}
+		 	}
 
 	static PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 

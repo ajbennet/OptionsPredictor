@@ -21,14 +21,15 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 		this.dataSource = dataSource;
 	}
 
-	public void insert(Put puts, int date, double strike, String time, double last,double open, double close, double high, double low, double roc, double aroc) {
+	public void insert(Put puts, int date, double strike, String time, double last,double open, double close, double high, double low, double roc, double aroc, int dte,
+			double percentbelow, double rom, double arom, int regtmargin) {
 		String sql = "INSERT INTO tdputs "
 				+ "(OPTIONSYMBOL,BID,ASK,BIDASKSIZE,LAST,TIME,VOLUME,"
 				+ "OPENINTEREST,REALTIME,UNDERLYINGSYMBOL,DELTA,GAMMA,THETA,VEGA,"
 				+ "RHO,IMPLIEDVOLATILITY,TIMEVALUEINDEX,MULTIPLIER,CHANGEVALUE,"
 				+ "CHANGEPERCENT,INTHEMONEY,NEARTHEMONEY,THEORETICALVALUE,EXPIRATION,STRIKE,"
-				+ "OPEN,CLOSE, HIGH, LOW, ROC, AROC)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "OPEN,CLOSE, HIGH, LOW, ROC, AROC, DTE, PERCENTBELOW, ROM, AROM, REGTMARGIN)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Connection conn = null;
 		//logger.info("Processing Put : " + puts);
 		try {
@@ -65,6 +66,11 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 			ps.setDouble(29,low);
 			ps.setDouble(30,roc);
 			ps.setDouble(31,aroc);
+			ps.setInt(32,dte);
+			ps.setDouble(33, percentbelow);
+			ps.setDouble(34, rom);
+			ps.setDouble(35, arom);
+			ps.setInt(36, regtmargin);
 			ps.executeUpdate();
 			ps.close();
 

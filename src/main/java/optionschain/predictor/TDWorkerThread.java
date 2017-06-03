@@ -93,29 +93,49 @@ public class TDWorkerThread implements Runnable {
 	private void processCommand() throws JsonParseException, IOException, ParseException, Exception {
 
 		Amtd amtd = getOptions(this.command);
-		
-		if (amtd!=null && amtd.getOptionChainResults()!=null &&
-				amtd.getOptionChainResults().getOptionDate()!=null){
+
+		if (amtd != null && amtd.getOptionChainResults() != null
+				&& amtd.getOptionChainResults().getOptionDate() != null) {
 			Iterator<OptionDate> optionDateIterator = amtd.getOptionChainResults().getOptionDate().iterator();
-			while(optionDateIterator.hasNext()){
-				OptionDate optionDate =(OptionDate) optionDateIterator.next();
+			while (optionDateIterator.hasNext()) {
+				OptionDate optionDate = (OptionDate) optionDateIterator.next();
 				Iterator<OptionStrike> strikeIterator = optionDate.getOptionStrike().iterator();
-				while(strikeIterator.hasNext()){
-					OptionStrike optionStrike =(OptionStrike) strikeIterator.next();
+				while (strikeIterator.hasNext()) {
+					OptionStrike optionStrike = (OptionStrike) strikeIterator.next();
 					double bid = optionStrike.getPut().getBid();
 					double strike = optionStrike.getStrikePrice();
-					double roc =  bid/ (strike - bid);
-					int days = optionDate.getDaysToExpiration();
-					double aroc = ((double) Math.pow((double) (1 + roc), (double) (365 / days))) - 1;
-					dao.insert(optionStrike.getPut(), optionDate.getDate(), optionStrike.getStrikePrice(), 
-							amtd.getOptionChainResults().getTime(), 
-							amtd.getOptionChainResults().getLast(),
-							amtd.getOptionChainResults().getOpen(),
-							amtd.getOptionChainResults().getClose(),
-							amtd.getOptionChainResults().getHigh(),
-							amtd.getOptionChainResults().getLow(),
-							roc, aroc);
-					
+					double roc = bid / (strike - bid);
+					int dte = optionDate.getDaysToExpiration();
+					double aroc = ((double) Math.pow((double) (1 + roc), (double) (365 / dte))) - 1;
+					double last = amtd.getOptionChainResults().getLast();
+					double percentBelow = strike/last;
+					//regTMargin = MAX(
+					//   (SUM(
+//							((0.2*Last)*100),
+//							((Strike-Last)*100),
+//							(Bid*100))
+//						  ),
+//						  (SUM(
+//								  ((0.1*Strike)*100),
+//								  (Bid*100))
+//						  ),
+//						  (SUM(
+//								  50,(Bid*100)
+//						  )
+//						 ))
+					double regT1 = (last*0.2*100)+((strike-last) * 100) + (bid*100);
+					double regT2 = ((0.1* strike)*100)+(bid*100);
+					double regT3 = 50+(bid*100);
+					double regTMargin = Math.max(regT1, regT2);
+					regTMargin = Math.max(regT3,  regTMargin);
+					double rom = bid*100/regTMargin;
+					//arom= =((1+rom)^(365/dte))-1
+					double arom = Math.pow((1+rom),(365/dte))-1;
+					dao.insert(optionStrike.getPut(), optionDate.getDate(), optionStrike.getStrikePrice(),
+							amtd.getOptionChainResults().getTime(), amtd.getOptionChainResults().getLast(),
+							amtd.getOptionChainResults().getOpen(), amtd.getOptionChainResults().getClose(),
+							amtd.getOptionChainResults().getHigh(), amtd.getOptionChainResults().getLow(), roc, aroc, dte, percentBelow, rom, arom , new Double(regTMargin).intValue());
+
 				}
 			}
 		}
@@ -169,7 +189,7 @@ public class TDWorkerThread implements Runnable {
 		return amtd;
 
 	}
-	
+
 	static long lastlogintime;
 
 	public static void login() throws IOException {
@@ -187,7 +207,8 @@ public class TDWorkerThread implements Runnable {
 		ohm.put("password", Config.getProperty("AMTDPassword"));
 		ohm.put("source", Config.getProperty("AMTDsourceID")); // F3
 		ohm.put("version", "1001");
-		String url = "https://apis.tdameritrade.com/apps/300/LogIn?source="+Config.getProperty("AMTDsourceID")+"&version=1001";
+		String url = "https://apis.tdameritrade.com/apps/300/LogIn?source=" + Config.getProperty("AMTDsourceID")
+				+ "&version=1001";
 		String res = Utils.sendURLPostRequest(url, ohm);
 		XMLNode root = new XMLNodeBuilder(res).getRoot();
 
@@ -197,7 +218,7 @@ public class TDWorkerThread implements Runnable {
 				.getChildwithName("account").getChildwithNameNonNull("segment").getValue());
 		SessionControl.setCompany(root.getChildwithNameNonNull("xml-log-in").getChildwithNameNonNull("accounts")
 				.getChildwithName("account").getChildwithNameNonNull("company").getValue());
-				//
+		//
 
 		// Sending information through HTTPS: POST
 
