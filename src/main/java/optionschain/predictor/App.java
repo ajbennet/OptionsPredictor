@@ -46,9 +46,9 @@ class OptionsTask extends TimerTask{
 //		TDController.getDataFromDB();
 //		Utils.sendEmail("theoptionsprofit@gmail.com");
 //		logger.info("Email sent");
-		
-		TDController.clearData();
 		logger.info("Options Chain! Started now : " + Calendar.getInstance().getTime());
+		TDController.clearData();
+		
 		TDWorkerThread.login();
 
 		ExecutorService executor = Executors.newFixedThreadPool(20);
