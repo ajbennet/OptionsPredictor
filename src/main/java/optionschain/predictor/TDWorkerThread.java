@@ -2,7 +2,9 @@ package optionschain.predictor;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
@@ -131,10 +133,22 @@ public class TDWorkerThread implements Runnable {
 					double rom = bid*100/regTMargin;
 					//arom= =((1+rom)^(365/dte))-1
 					double arom = Math.pow((1+rom),(365/dte))-1;
+					String good = "N/A";
+					String earningsDateStr = Config.getEarnings(optionStrike.getPut().getUnderlyingSymbol());
+					if (earningsDateStr != null && !earningsDateStr.isEmpty()) {
+						Date earningsDate = new SimpleDateFormat("MM/dd/yyyy").parse(earningsDateStr);
+						Date today = Calendar.getInstance().getTime();
+						Date expirationDate = new SimpleDateFormat("yyyyMMdd").parse(optionDate.getDate() + "");
+						if (earningsDate.after(expirationDate) || earningsDate.before(today)) {
+							good = "Good";
+						} else {
+							good = "NotGood";
+						}
+					}
 					dao.insert(optionStrike.getPut(), optionDate.getDate(), optionStrike.getStrikePrice(),
 							amtd.getOptionChainResults().getTime(), amtd.getOptionChainResults().getLast(),
 							amtd.getOptionChainResults().getOpen(), amtd.getOptionChainResults().getClose(),
-							amtd.getOptionChainResults().getHigh(), amtd.getOptionChainResults().getLow(), roc, aroc, dte, percentBelow, rom, arom , new Double(regTMargin).intValue());
+							amtd.getOptionChainResults().getHigh(), amtd.getOptionChainResults().getLow(), roc, aroc, dte, percentBelow, rom, arom , new Double(regTMargin).intValue(), earningsDateStr, good);
 
 				}
 			}

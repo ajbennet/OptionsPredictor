@@ -26,14 +26,14 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 	}
 
 	public void insert(Put puts, int date, double strike, String time, double last,double open, double close, double high, double low, double roc, double aroc, int dte,
-			double percentbelow, double rom, double arom, int regtmargin) {
+			double percentbelow, double rom, double arom, int regtmargin, String earningsDate, String good) {
 		String sql = "INSERT INTO tdputs "
 				+ "(OPTIONSYMBOL,BID,ASK,BIDASKSIZE,LAST,TIME,VOLUME,"
 				+ "OPENINTEREST,REALTIME,UNDERLYINGSYMBOL,DELTA,GAMMA,THETA,VEGA,"
 				+ "RHO,IMPLIEDVOLATILITY,TIMEVALUEINDEX,MULTIPLIER,CHANGEVALUE,"
 				+ "CHANGEPERCENT,INTHEMONEY,NEARTHEMONEY,THEORETICALVALUE,EXPIRATION,STRIKE,"
-				+ "OPEN,CLOSE, HIGH, LOW, ROC, AROC, DTE, PERCENTBELOW, ROM, AROM, REGTMARGIN)"
-				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "OPEN,CLOSE, HIGH, LOW, ROC, AROC, DTE, PERCENTBELOW, ROM, AROM, REGTMARGIN, EARNINGSDATE, GOOD)"
+				+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?)";
 		Connection conn = null;
 		//logger.info("Processing Put : " + puts);
 		try {
@@ -75,6 +75,8 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 			ps.setDouble(34, rom*100);
 			ps.setDouble(35, arom*100);
 			ps.setInt(36, regtmargin);
+			ps.setString(37, earningsDate);
+			ps.setString(38, good);
 			ps.executeUpdate();
 			ps.close();
 
@@ -95,9 +97,9 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 	}
 	
 	public void filterData() {
-		String query = "SELECT UNDERLYINGSYMBOL, LAST, EXPIRATION,DTE,STRIKE,BID,ASK, THEORETICALVALUE,  DELTA,PERCENTBELOW, ROM, AROM, REGTMARGIN,IMPLIEDVOLATILITY,ROC, AROC"
+		String query = "SELECT UNDERLYINGSYMBOL, LAST, EXPIRATION, DTE,EARNINGSDATE, GOOD, STRIKE,BID,ASK, THEORETICALVALUE,  DELTA,PERCENTBELOW, ROM, AROM, REGTMARGIN,IMPLIEDVOLATILITY,ROC, AROC"
 				+ " FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and "
-				+ "delta > -0.06 and AROM >29 AND  DTE <60 LIMIT 0,1000000;";
+				+ "delta > -0.06 and AROM >29 AND  DTE <60 AND GOOD=\"Good\" LIMIT 0,1000000;";
 		Connection conn = null;
 		//logger.info("Processing Put : " + puts);
 		try {

@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
 	private static Properties prop = new Properties();
+	private static Properties earnings = new Properties();
 	private static String propFileName = "config.properties";
+	private static String earningsFileName = "earnings.properties";
 	private static final Logger logger = LoggerFactory
 			.getLogger(Config.class);
 	static {
@@ -24,9 +26,24 @@ public class Config {
 			e.printStackTrace();
 		}
 	}
+	
+	static {
+		InputStream inputStream = Config.class.getClassLoader()
+				.getResourceAsStream(earningsFileName);
+		try {
+			earnings.load(inputStream);
+			logger.info("Earnings :" +earnings);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static String getProperty(String key) {
 		return prop.getProperty(key);
+	}
+	
+	public static String getEarnings(String key) {
+		return earnings.getProperty(key);
 	}
 
 }

@@ -2,7 +2,9 @@ package optionschain.predictor;
 
 import java.io.IOException;
 import java.text.ParseException;
-
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -22,11 +24,31 @@ public class App {
 	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(App.class);
 
 	public static void main(String[] args) throws JsonParseException, IOException, ParseException {
-		TDController.getDataFromDB();
-		Utils.sendEmail("theoptionsprofit@gmail.com");
-		logger.info("Email sent");
+	
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.HOUR_OF_DAY, 16);
+		today.set(Calendar.MINUTE, 30);
+		today.set(Calendar.SECOND, 0);
+
+		// every day at at 4:30 pm you run your task
+		Timer timer = new Timer();
+		timer.schedule(new OptionsTask(), today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)); // 60*60*24*100 = 8640000ms
+		logger.info("Timer task started");
+	}
+	
+}
+
+class OptionsTask extends TimerTask{
+	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(OptionsTask.class);
+	@Override
+	public void run() {
+		try{
+//		TDController.getDataFromDB();
+//		Utils.sendEmail("theoptionsprofit@gmail.com");
+//		logger.info("Email sent");
+		
 		TDController.clearData();
-		logger.info("Options Chain!");
+		logger.info("Options Chain! Started now : " + Calendar.getInstance().getTime());
 		TDWorkerThread.login();
 
 		ExecutorService executor = Executors.newFixedThreadPool(20);
@@ -58,5 +80,14 @@ public class App {
 		TDController.getDataFromDB();
 		Utils.sendEmail("theoptionsprofit@gmail.com");
 		logger.info("Email sent");
+		}catch( JsonParseException e){
+			e.printStackTrace();
+			logger.error(e.getLocalizedMessage());
+		}catch( IOException e){
+
+			e.printStackTrace();
+			logger.error(e.getLocalizedMessage());
+		}
 	}
+	
 }

@@ -34,6 +34,8 @@ CREATE TABLE `tdputs` (
   `UNDERLYINGSYMBOL` varchar(100) ,
   `EXPIRATION` int not null,
   `DTE` int not null,
+  `EARNINGSDATE` varchar(20),
+  `GOOD` varchar(10),
   `STRIKE` double  NOT NULL,
   `ASK` double  NOT NULL,
   `BID` double  NOT NULL,
@@ -71,11 +73,14 @@ CREATE TABLE `tdputs` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;	
 
 
+delete from tdputs;
+
 use  optionschain;
 
 SELECT * FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and delta > -0.06 and AROM >0.29 AND  DTE <60 LIMIT 0,1000000;
 
 
+SELECT * FROM tdputs where good <>"Good";
 
 SELECT 
     lastruntime, count(*)
