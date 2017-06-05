@@ -99,7 +99,7 @@ public class TDOptionsChainDaoImpl implements TDOptionsChainDao {
 	public void filterData() {
 		String query = "SELECT UNDERLYINGSYMBOL, LAST, EXPIRATION, DTE,EARNINGSDATE, GOOD, STRIKE,BID,ASK, THEORETICALVALUE,  DELTA,PERCENTBELOW, ROM, AROM, REGTMARGIN,IMPLIEDVOLATILITY,ROC, AROC"
 				+ " FROM tdputs where bid >.09 and theta < 0 and STRIKE < LAST and "
-				+ "delta > -0.06 and AROM >29 AND  DTE <60 AND GOOD=\"Good\" LIMIT 0,1000000;";
+				+ "delta > -0.06 and AROM >29 AND  DTE <60 and DTE >19 AND GOOD=\"Good\" LIMIT 0,1000000;";
 		Connection conn = null;
 		//logger.info("Processing Put : " + puts);
 		try {
